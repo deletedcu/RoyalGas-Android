@@ -12,7 +12,7 @@ public class MyMenu {
     public static final String IMAGE = "image";
     public static final String DESCRIPTION = "description";
     public static final String TYPE = "type";
-    public static final String NATIVE_TYPE = "native_home";
+    public static final String NATIVE_TYPE = "native-contact";
     public static final String WEBVIEW_TYPE = "webview";
 
     private String strIconURL;

@@ -80,6 +80,17 @@ public class HomeFragment extends Fragment {
             intent.putExtra("link", menu.getStrPath());
             intent.putExtra("title", menu.getStrTitle());
             getContext().startActivity(intent);
+        } else if (menu.getStrType().equals(MyMenu.NATIVE_TYPE)) {
+            if (menu.getStrTitle().equals("Contact Us")) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                String[] recipients = {"m.abdelhadi@gmail.com"};
+                intent.putExtra(Intent.EXTRA_EMAIL, recipients);
+                intent.putExtra(Intent.EXTRA_SUBJECT, "From my phone");
+                intent.putExtra(Intent.EXTRA_TEXT, "Hello, RoyalGas support team.");
+                intent.putExtra(Intent.EXTRA_CC, "");
+                intent.setType("text/html");
+                getContext().startActivity(Intent.createChooser(intent, "Send mail"));
+            }
         }
 
     }

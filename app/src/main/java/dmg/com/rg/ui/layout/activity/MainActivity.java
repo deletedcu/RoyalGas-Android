@@ -1,6 +1,7 @@
 package dmg.com.rg.ui.layout.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -67,8 +68,14 @@ public class MainActivity extends AppCompatActivity {
             replaceFragment(fragment, menu.getStrTitle());
         } else if (menu.getStrTitle().equals("Contact Us")) {
             Log.d(TAG, "Contact Us");
-            AboutFragment fragment = AboutFragment.newInstance();
-            replaceFragment(fragment, menu.getStrTitle());
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            String[] recipients = {"m.abdelhadi@gmail.com"};
+            intent.putExtra(Intent.EXTRA_EMAIL, recipients);
+            intent.putExtra(Intent.EXTRA_SUBJECT, "From my phone");
+            intent.putExtra(Intent.EXTRA_TEXT, "Hello, RoyalGas support team.");
+            intent.putExtra(Intent.EXTRA_CC, "");
+            intent.setType("text/html");
+            startActivity(Intent.createChooser(intent, "Send mail"));
         }
 
         mDrawLayout.closeDrawer(GravityCompat.START);
