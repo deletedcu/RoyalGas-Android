@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         initMenu();
 
+        setTitle("Home");
         HomeFragment fragment = HomeFragment.newInstance();
         replaceFragment(fragment, "Home");
 
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!title.equals(mCurrentFragmentTitle)) {
             mCurrentFragmentTitle = title;
+            setTitle(title);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.layout_container, fragment);
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
