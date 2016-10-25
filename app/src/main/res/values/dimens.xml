@@ -1,0 +1,34 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <!-- HomeFragment Image Slider height-->
+    <dimen name="homefrag_scroll_height">200dp</dimen>
+
+    <!-- Image size -->
+    <dimen name="image_20dp">20dp</dimen>
+    <dimen name="image_30dp">30dp</dimen>
+    <dimen name="image_50dp">50dp</dimen>
+    <dimen name="image_80dp">80dp</dimen>
+
+    <!-- Padding -->
+    <dimen name="padding_5dp">5dp</dimen>
+    <dimen name="padding_10dp">10dp</dimen>
+    <dimen name="padding_20dp">20dp</dimen>
+    <dimen name="padding_40dp">40dp</dimen>
+
+    <!-- Radius -->
+    <dimen name="radius_10dp">10dp</dimen>
+    <dimen name="radius_5dp">5dp</dimen>
+
+    <!-- Font size -->
+    <dimen name="font_20dp">20dp</dimen>
+    <dimen name="font_15dp">15dp</dimen>
+    <dimen name="font_12dp">12dp</dimen>
+
+</resources>
