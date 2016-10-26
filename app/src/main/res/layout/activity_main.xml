@@ -37,9 +37,9 @@
                     android:alpha="0.3"/>
 
                 <ImageView
-                    android:layout_width="@dimen/image_80dp"
-                    android:layout_height="@dimen/image_80dp"
-                    android:src="@drawable/ic_menu_camera"
+                    android:layout_width="80dp"
+                    android:layout_height="54dp"
+                    android:src="@mipmap/royal_logo"
                     android:scaleType="fitXY"
                     android:layout_marginTop="@dimen/padding_40dp"
                     android:layout_marginLeft="@dimen/padding_20dp"/>

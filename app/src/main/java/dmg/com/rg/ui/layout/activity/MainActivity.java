@@ -36,10 +36,8 @@ import dmg.com.rg.App;
 import dmg.com.rg.R;
 import dmg.com.rg.model.MyMenu;
 import dmg.com.rg.ui.adapter.MyMenuAdapter;
-import dmg.com.rg.ui.layout.fragment.AboutFragment;
 import dmg.com.rg.ui.layout.fragment.HomeFragment;
 import dmg.com.rg.ui.layout.fragment.MyWebViewFragment;
-import dmg.com.rg.ui.layout.fragment.ServicesFragment;
 import dmg.com.rg.util.Constants;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,14 +69,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (menu.getStrTitle().equals("Contact Us")) {
             Log.d(TAG, "Contact Us");
             Snackbar.make(view, "Contact Us", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-//            Intent intent = new Intent(Intent.ACTION_SEND);
-//            String[] recipients = {"m.abdelhadi@gmail.com"};
-//            intent.putExtra(Intent.EXTRA_EMAIL, recipients);
-//            intent.putExtra(Intent.EXTRA_SUBJECT, "From my phone");
-//            intent.putExtra(Intent.EXTRA_TEXT, "Hello, RoyalGas support team.");
-//            intent.putExtra(Intent.EXTRA_CC, "");
-//            intent.setType("text/html");
-//            startActivity(Intent.createChooser(intent, "Send mail"));
         }
 
         mDrawLayout.closeDrawer(GravityCompat.START);
@@ -92,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_menu_gallery);
+        mToolbar.setNavigationIcon(R.mipmap.ic_launcher);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
