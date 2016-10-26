@@ -29,7 +29,6 @@ import dmg.com.rg.ui.view.ProgressBarAnimation;
 public class ImageFrag extends Fragment {
 
     private String TAG = this.getClass().getSimpleName();
-    private int mImageResourceId;
     private String mTitle;
     private String mDescription;
     private String mImagePath;

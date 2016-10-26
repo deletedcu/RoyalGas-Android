@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -83,11 +84,21 @@ public class MyWebViewFragment extends Fragment {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setUseWideViewPort(true);
         mWebView.getSettings().setLoadWithOverviewMode(true);
+        mWebView.getSettings().setSupportZoom(true);
         mWebView.getSettings().setDisplayZoomControls(true);
+        mWebView.getSettings().setAppCachePath( getContext().getCacheDir().getAbsolutePath() );
+        mWebView.getSettings().setAllowFileAccess( true );
+        mWebView.getSettings().setAppCacheEnabled(true);
+
         if (Build.VERSION.SDK_INT >= 19) {
             mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         } else {
             mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
+        if (!NetworkUtils.checkNetworkState(getContext())) {
+            mWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        } else {
+            mWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         }
         mWebView.loadUrl(mLink);
     }
@@ -108,7 +119,7 @@ public class MyWebViewFragment extends Fragment {
                     loadingDialog.dismiss();
                     loadingDialog = null;
                 }
-                mButtonRefresh.setVisibility(View.VISIBLE);
+//                mButtonRefresh.setVisibility(View.VISIBLE);
             }
         }
 

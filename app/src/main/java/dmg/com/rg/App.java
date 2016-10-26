@@ -2,12 +2,15 @@ package dmg.com.rg;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import dmg.com.rg.helper.DatabaseAdapter;
 import dmg.com.rg.util.Constants;
 
 /**
@@ -20,6 +23,9 @@ public class App extends Application {
     private static Context appContext;
     public static AsyncHttpClient httpClient;
     public static ImageLoader imageLoader;
+    public static DatabaseAdapter dbAdapter;
+    public static SharedPreferences preferences;
+    public static SharedPreferences.Editor editor;
 
     public static Application getInstance() {
         return new App();
@@ -32,6 +38,9 @@ public class App extends Application {
         appContext = getApplicationContext();
         initImageLoader();
         initHttpClient();
+        initDatabaseAdapter();
+        preferences = getSharedPreferences("royalgas", 0);
+        editor = preferences.edit();
     }
 
     public static Context getContext() {
@@ -49,7 +58,21 @@ public class App extends Application {
 
     private static void initImageLoader() {
         imageLoader = ImageLoader.getInstance();
-        imageLoader.init(ImageLoaderConfiguration.createDefault(getContext()));
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .showImageForEmptyUri(R.mipmap.background)
+                .showStubImage(R.mipmap.background)
+                .build();
+        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(getContext())
+                .defaultDisplayImageOptions(defaultOptions)
+                .build();
+        imageLoader.init(configuration);
+    }
+
+    private static void initDatabaseAdapter() {
+        dbAdapter = new DatabaseAdapter(getContext());
+        dbAdapter.createDatabase();
     }
 
 }

@@ -15,15 +15,7 @@ public class NetworkUtils {
     public static boolean checkNetworkState(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        boolean state = networkInfo != null && networkInfo.isConnected();
-        if (!state) {
-            AlertUtils.showAlert(context,
-                    context.getResources().getString(R.string.string_network_error),
-                    context.getResources().getString(R.string.string_network_noconnection));
-        }
-        return state;
+        return networkInfo != null && networkInfo.isConnected();
     }
-
-
 
 }

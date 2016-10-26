@@ -1,7 +1,9 @@
 package dmg.com.rg.ui.layout.activity;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -68,14 +70,15 @@ public class MainActivity extends AppCompatActivity {
             replaceFragment(fragment, menu.getStrTitle());
         } else if (menu.getStrTitle().equals("Contact Us")) {
             Log.d(TAG, "Contact Us");
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            String[] recipients = {"m.abdelhadi@gmail.com"};
-            intent.putExtra(Intent.EXTRA_EMAIL, recipients);
-            intent.putExtra(Intent.EXTRA_SUBJECT, "From my phone");
-            intent.putExtra(Intent.EXTRA_TEXT, "Hello, RoyalGas support team.");
-            intent.putExtra(Intent.EXTRA_CC, "");
-            intent.setType("text/html");
-            startActivity(Intent.createChooser(intent, "Send mail"));
+            Snackbar.make(view, "Contact Us", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//            Intent intent = new Intent(Intent.ACTION_SEND);
+//            String[] recipients = {"m.abdelhadi@gmail.com"};
+//            intent.putExtra(Intent.EXTRA_EMAIL, recipients);
+//            intent.putExtra(Intent.EXTRA_SUBJECT, "From my phone");
+//            intent.putExtra(Intent.EXTRA_TEXT, "Hello, RoyalGas support team.");
+//            intent.putExtra(Intent.EXTRA_CC, "");
+//            intent.setType("text/html");
+//            startActivity(Intent.createChooser(intent, "Send mail"));
         }
 
         mDrawLayout.closeDrawer(GravityCompat.START);
@@ -88,15 +91,6 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         mToolbar.setNavigationIcon(R.drawable.ic_menu_gallery);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -124,28 +118,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void initMenu() {
 
         mMenuAdapter = new MyMenuAdapter(this, mMenuList);
@@ -168,6 +140,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadMenu() {
+        boolean isCache = App.preferences.getBoolean(Constants.ISCACHE_MENU, false);
+        if (isCache) {
+            Cursor cursor = App.dbAdapter.getMenus();
+            if (cursor.getCount() > 0) {
+                mMenuList.clear();
+                while (cursor.moveToNext()) {
+                    String title = cursor.getString(cursor.getColumnIndex(MyMenu.TITLE));
+                    String path = cursor.getString(cursor.getColumnIndex(MyMenu.PATH));
+                    String icon = cursor.getString(cursor.getColumnIndex(MyMenu.ICON));
+                    String image = cursor.getString(cursor.getColumnIndex(MyMenu.IMAGE));
+                    String type = cursor.getString(cursor.getColumnIndex(MyMenu.TYPE));
+
+                    MyMenu menu = new MyMenu(title, path, icon, image, type);
+                    mMenuList.add(menu);
+                }
+
+                mMenuAdapter.setList(mMenuList);
+            } else {
+                syncMenu();
+            }
+
+            cursor.close();
+        } else {
+            syncMenu();
+        }
+    }
+
+    private void syncMenu() {
         String url = String.format("%s%s", Constants.WEBSERVICE_BASE_URL, Constants.MENU_URL);
         App.httpClient.get(this, url, new AsyncHttpResponseHandler() {
             @Override
@@ -177,22 +177,29 @@ public class MainActivity extends AppCompatActivity {
                     String strResponse = new String(responseBody, "UTF-8");
                     JSONObject jsonObject = new JSONObject(strResponse);
                     JSONArray jsonArray = jsonObject.getJSONArray("sections");
+
                     for (int i = 0; i < jsonArray.length(); i ++) {
                         JSONObject item = jsonArray.getJSONObject(i);
-                        String title = item.getString(MyMenu.TITLE);
-                        String path = item.getString(MyMenu.PATH);
-                        String icon = item.getString(MyMenu.ICON);
-                        String image = item.getString(MyMenu.IMAGE);
-                        String type = item.getString(MyMenu.TYPE);
-                        MyMenu menu = new MyMenu(title, path, icon, image, type);
-                        mMenuList.add(menu);
+
+                        ContentValues values = new ContentValues();
+                        values.put(MyMenu.TITLE, item.getString(MyMenu.TITLE));
+                        values.put(MyMenu.PATH, item.getString(MyMenu.PATH));
+                        values.put(MyMenu.ICON, item.getString(MyMenu.ICON));
+                        values.put(MyMenu.IMAGE, item.getString(MyMenu.IMAGE));
+                        values.put(MyMenu.TYPE, item.getString(MyMenu.TYPE));
+
+                        App.dbAdapter.writeMenu(values);
                     }
+
+                    App.editor.putBoolean(Constants.ISCACHE_MENU, true);
+                    App.editor.commit();
+                    loadMenu();
 
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.d(TAG, e.getLocalizedMessage());
                 } finally {
-                    mMenuAdapter.setList(mMenuList);
+
                 }
             }
 
