@@ -44,7 +44,8 @@
                 android:horizontalSpacing="@dimen/padding_5dp"
                 android:verticalSpacing="@dimen/padding_5dp"
                 android:numColumns="2"
-                android:stretchMode="spacingWidth"/>
+                android:stretchMode="spacingWidth"
+                android:background="@color/colorPrimary"/>
 
         </LinearLayout>
 

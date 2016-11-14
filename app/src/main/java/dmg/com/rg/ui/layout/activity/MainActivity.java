@@ -39,6 +39,7 @@ import dmg.com.rg.ui.adapter.MyMenuAdapter;
 import dmg.com.rg.ui.layout.fragment.HomeFragment;
 import dmg.com.rg.ui.layout.fragment.MyWebViewFragment;
 import dmg.com.rg.util.Constants;
+import dmg.com.rg.util.ShardData;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -81,8 +82,8 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-
-        mToolbar.setNavigationIcon(R.mipmap.ic_launcher);
+        mToolbar.setNavigationIcon(R.mipmap.menu);
+        mToolbar.setLogo(R.mipmap.ic_launcher);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         initMenu();
 
-        setTitle("Home");
+        setTitle("RoyalGas");
         HomeFragment fragment = HomeFragment.newInstance();
         replaceFragment(fragment, "Home");
 
@@ -112,7 +113,10 @@ public class MainActivity extends AppCompatActivity {
 
         mMenuAdapter = new MyMenuAdapter(this, mMenuList);
         mMenuListView.setAdapter(mMenuAdapter);
-        loadMenu();
+
+        mMenuList = ShardData.getInstance().getMenuList();
+        mMenuAdapter.setList(mMenuList);
+
     }
 
     private void replaceFragment(Fragment fragment, String title) {
@@ -127,77 +131,6 @@ public class MainActivity extends AppCompatActivity {
             ft.commit();
         }
 
-    }
-
-    private void loadMenu() {
-        boolean isCache = App.preferences.getBoolean(Constants.ISCACHE_MENU, false);
-        if (isCache) {
-            Cursor cursor = App.dbAdapter.getMenus();
-            if (cursor.getCount() > 0) {
-                mMenuList.clear();
-                while (cursor.moveToNext()) {
-                    String title = cursor.getString(cursor.getColumnIndex(MyMenu.TITLE));
-                    String path = cursor.getString(cursor.getColumnIndex(MyMenu.PATH));
-                    String icon = cursor.getString(cursor.getColumnIndex(MyMenu.ICON));
-                    String image = cursor.getString(cursor.getColumnIndex(MyMenu.IMAGE));
-                    String type = cursor.getString(cursor.getColumnIndex(MyMenu.TYPE));
-
-                    MyMenu menu = new MyMenu(title, path, icon, image, type);
-                    mMenuList.add(menu);
-                }
-
-                mMenuAdapter.setList(mMenuList);
-            } else {
-                syncMenu();
-            }
-
-            cursor.close();
-        } else {
-            syncMenu();
-        }
-    }
-
-    private void syncMenu() {
-        String url = String.format("%s%s", Constants.WEBSERVICE_BASE_URL, Constants.MENU_URL);
-        App.httpClient.get(this, url, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                try {
-
-                    String strResponse = new String(responseBody, "UTF-8");
-                    JSONObject jsonObject = new JSONObject(strResponse);
-                    JSONArray jsonArray = jsonObject.getJSONArray("sections");
-
-                    for (int i = 0; i < jsonArray.length(); i ++) {
-                        JSONObject item = jsonArray.getJSONObject(i);
-
-                        ContentValues values = new ContentValues();
-                        values.put(MyMenu.TITLE, item.getString(MyMenu.TITLE));
-                        values.put(MyMenu.PATH, item.getString(MyMenu.PATH));
-                        values.put(MyMenu.ICON, item.getString(MyMenu.ICON));
-                        values.put(MyMenu.IMAGE, item.getString(MyMenu.IMAGE));
-                        values.put(MyMenu.TYPE, item.getString(MyMenu.TYPE));
-
-                        App.dbAdapter.writeMenu(values);
-                    }
-
-                    App.editor.putBoolean(Constants.ISCACHE_MENU, true);
-                    App.editor.commit();
-                    loadMenu();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d(TAG, e.getLocalizedMessage());
-                } finally {
-
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
-            }
-        });
     }
 
 }

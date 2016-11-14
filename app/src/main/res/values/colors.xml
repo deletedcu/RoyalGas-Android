@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorBackground">#7285A7</color>
 
     <!-- https://www.google.com/design/spec/style/color.html#color-color-palette -->
     <!-- https://developer.android.com/reference/android/support/design/R.color.html -->

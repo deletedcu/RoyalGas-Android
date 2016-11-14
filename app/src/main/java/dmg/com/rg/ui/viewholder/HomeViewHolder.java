@@ -43,6 +43,10 @@ public class HomeViewHolder {
     }
 
     public void setImage(String url) {
+        if (url.isEmpty()) {
+            mImageView.setImageResource(R.mipmap.background);
+            return;
+        }
         App.imageLoader.loadImage(url, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {

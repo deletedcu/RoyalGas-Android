@@ -15,4 +15,10 @@ public interface Constants {
     static final String ISCACHE_HOME = "cache_home";
     static final String ISCACHE_GALLERY = "cache_gallery";
 
+    static final String PREF_NAME = "RG_PREFERENCE";
+
+    static final String UPDATE_MENU = "udpate_menu";
+    static final String UPDATE_GALLERY = "update_gallery";
+    static final String UPDATE_HOME = "update_home";
+
 }

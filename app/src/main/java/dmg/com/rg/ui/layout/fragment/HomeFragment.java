@@ -45,6 +45,7 @@ import dmg.com.rg.ui.layout.activity.MyWebViewActivity;
 import dmg.com.rg.util.Constants;
 import dmg.com.rg.util.ConvertUtils;
 import dmg.com.rg.util.DeviceUtils;
+import dmg.com.rg.util.NetworkUtils;
 
 /**
  * Created by Star on 10/19/16.
@@ -148,7 +149,11 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        loadGallery();
+        if (NetworkUtils.checkNetworkState(getContext())) {
+            syncGallery();
+        } else {
+            loadGallery();
+        }
 
     }
 
@@ -156,7 +161,12 @@ public class HomeFragment extends Fragment {
 
         mHomeAdapter = new HomeAdapter(getContext(), mHomeList);
         mGridView.setAdapter(mHomeAdapter);
-        loadHome();
+
+        if (NetworkUtils.checkNetworkState(getContext())) {
+            syncHome();
+        } else {
+            loadHome();
+        }
     }
 
     private void addDotsIndicator(int count) {
@@ -248,8 +258,8 @@ public class HomeFragment extends Fragment {
 
                 mGalleryAdapter.setList(mGalleryList);
                 addDotsIndicator(mGalleryList.size());
-            } else {
-                syncGallery();
+//            } else {
+//                syncGallery();
             }
 
             cursor.close();
@@ -269,27 +279,31 @@ public class HomeFragment extends Fragment {
 
                         String strResponse = new String(responseBody, "UTF-8");
                         JSONObject jsonObject = new JSONObject(strResponse);
-                        JSONArray jsonArray = jsonObject.getJSONArray("sections");
-                        if (jsonArray.length() > 0) {
-                            App.dbAdapter.removeGallery();
+                        long updateDate = jsonObject.getLong("updateDate");
+                        long oldDate = App.preferences.getLong(Constants.UPDATE_GALLERY, 0);
+                        if (updateDate > oldDate) {
+                            JSONArray jsonArray = jsonObject.getJSONArray("sections");
+                            if (jsonArray.length() > 0) {
+                                App.dbAdapter.removeGallery();
 
-                            for (int i = 0; i < jsonArray.length(); i ++) {
-                                JSONObject item = jsonArray.getJSONObject(i);
-                                ContentValues values = new ContentValues();
-                                values.put(ImageFrag.Keys.TITLE, item.getString(ImageFrag.Keys.TITLE));
-                                values.put(ImageFrag.Keys.DESCRIPTION, item.getString(ImageFrag.Keys.DESCRIPTION));
-                                values.put(ImageFrag.Keys.IMAGE_PATH, item.getString(ImageFrag.Keys.IMAGE_PATH));
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject item = jsonArray.getJSONObject(i);
+                                    ContentValues values = new ContentValues();
+                                    values.put(ImageFrag.Keys.TITLE, item.getString(ImageFrag.Keys.TITLE));
+                                    values.put(ImageFrag.Keys.DESCRIPTION, item.getString(ImageFrag.Keys.DESCRIPTION));
+                                    values.put(ImageFrag.Keys.IMAGE_PATH, item.getString(ImageFrag.Keys.IMAGE_PATH));
 
-                                App.dbAdapter.writeGallery(values);
+                                    App.dbAdapter.writeGallery(values);
+
+                                }
+
+                                App.editor.putBoolean(Constants.ISCACHE_GALLERY, true);
+                                App.editor.commit();
 
                             }
-
-                            App.editor.putBoolean(Constants.ISCACHE_GALLERY, true);
-                            App.editor.commit();
-
-                            loadGallery();
-
                         }
+
+                        loadGallery();
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -350,23 +364,30 @@ public class HomeFragment extends Fragment {
 
                         String strResponse = new String(responseBody, "UTF-8");
                         JSONObject jsonObject = new JSONObject(strResponse);
-                        JSONArray jsonArray = jsonObject.getJSONArray("sections");
+                        long updateDate = jsonObject.getLong("updateDate");
+                        long oldDate = App.preferences.getLong(Constants.UPDATE_HOME, 0);
+                        if (updateDate > oldDate) {
+                            JSONArray jsonArray = jsonObject.getJSONArray("sections");
 
-                        for (int i = 0; i < jsonArray.length(); i ++) {
-                            JSONObject item = jsonArray.getJSONObject(i);
-                            ContentValues values = new ContentValues();
-                            values.put(MyMenu.TITLE, item.getString(MyMenu.TITLE));
-                            values.put(MyMenu.PATH, item.getString(MyMenu.PATH));
-                            values.put(MyMenu.ICON, item.getString(MyMenu.ICON));
-                            values.put(MyMenu.IMAGE, item.getString(MyMenu.IMAGE));
-                            values.put(MyMenu.TYPE, item.getString(MyMenu.TYPE));
-                            values.put(MyMenu.DESCRIPTION, item.getString(MyMenu.DESCRIPTION));
+                            for (int i = 0; i < jsonArray.length(); i ++) {
+                                JSONObject item = jsonArray.getJSONObject(i);
+                                ContentValues values = new ContentValues();
+                                values.put(MyMenu.TITLE, item.getString(MyMenu.TITLE));
+                                values.put(MyMenu.PATH, item.getString(MyMenu.PATH));
+                                values.put(MyMenu.ICON, item.getString(MyMenu.ICON));
+                                values.put(MyMenu.IMAGE, item.getString(MyMenu.IMAGE));
+                                values.put(MyMenu.TYPE, item.getString(MyMenu.TYPE));
+                                values.put(MyMenu.DESCRIPTION, item.getString(MyMenu.DESCRIPTION));
 
-                            App.dbAdapter.writeHome(values);
+                                App.dbAdapter.writeHome(values);
+                            }
+
+                            App.editor.putBoolean(Constants.ISCACHE_HOME, true);
+                            App.editor.putLong(Constants.UPDATE_HOME, updateDate);
+                            App.editor.commit();
+
                         }
 
-                        App.editor.putBoolean(Constants.ISCACHE_HOME, true);
-                        App.editor.commit();
                         loadHome();
 
                     } catch (Exception e) {

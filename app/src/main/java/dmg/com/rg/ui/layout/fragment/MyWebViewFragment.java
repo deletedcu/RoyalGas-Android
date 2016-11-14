@@ -10,15 +10,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import dmg.com.rg.R;
+import dmg.com.rg.ui.layout.activity.MyWebViewActivity;
 import dmg.com.rg.util.NetworkUtils;
 
 /**
@@ -35,6 +38,8 @@ public class MyWebViewFragment extends Fragment {
     WebView mWebView;
     @BindView(R.id.button_refresh)
     Button mButtonRefresh;
+    @BindView(R.id.progressBar2)
+    ProgressBar mProgressBar;
 
     @OnClick(R.id.button_refresh)
     void refrshView() {
@@ -71,14 +76,23 @@ public class MyWebViewFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        if (loadingDialog != null) {
-            loadingDialog.dismiss();
-            loadingDialog = null;
-        }
+//        if (loadingDialog != null) {
+//            loadingDialog.dismiss();
+//            loadingDialog = null;
+//        }
         super.onDestroy();
     }
 
     private void initUI() {
+        mWebView.setWebChromeClient(new WebChromeClient() {
+            public void onProgressChanged(WebView view, int newProgress) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mProgressBar.setProgress(newProgress);
+                if (newProgress == 100) {
+                    mProgressBar.setVisibility(View.GONE);
+                }
+            }
+        });
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.getSettings().setJavaScriptEnabled(true);
@@ -108,27 +122,27 @@ public class MyWebViewFragment extends Fragment {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             if (NetworkUtils.checkNetworkState(getContext())) {
                 mButtonRefresh.setVisibility(View.GONE);
-                if (loadingDialog == null) {
-                    loadingDialog = ProgressDialog.show(getContext(), "", "Loading...", true);
-                } else {
-                    if (!loadingDialog.isShowing())
-                        loadingDialog = ProgressDialog.show(getContext(), "", "Loading...", true);
-                }
+//                if (loadingDialog == null) {
+//                    loadingDialog = ProgressDialog.show(getContext(), "", "Loading...", true);
+//                } else {
+//                    if (!loadingDialog.isShowing())
+//                        loadingDialog = ProgressDialog.show(getContext(), "", "Loading...", true);
+//                }
             } else {
-                if (loadingDialog != null) {
-                    loadingDialog.dismiss();
-                    loadingDialog = null;
-                }
+//                if (loadingDialog != null) {
+//                    loadingDialog.dismiss();
+//                    loadingDialog = null;
+//                }
 //                mButtonRefresh.setVisibility(View.VISIBLE);
             }
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            if (loadingDialog != null) {
-                loadingDialog.dismiss();
-                loadingDialog = null;
-            }
+//            if (loadingDialog != null) {
+//                loadingDialog.dismiss();
+//                loadingDialog = null;
+//            }
 
         }
     }
