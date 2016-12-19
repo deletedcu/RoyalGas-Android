@@ -47,64 +47,34 @@ public class HomeViewHolder {
             mImageView.setImageResource(R.mipmap.background);
             return;
         }
-        App.imageLoader.loadImage(url, new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String s, View view) {
-                ProgressBarAnimation anim = new ProgressBarAnimation(mProgressBar, 0, 100);
-                anim.setDuration(500);
-                mProgressBar.setAnimation(anim);
-                mProgressBar.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-                mProgressBar.setVisibility(View.GONE);
-                mImageView.setImageResource(R.mipmap.background);
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-                mProgressBar.setVisibility(View.GONE);
-                mImageView.setImageBitmap(bitmap);
-            }
-
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-                mProgressBar.setVisibility(View.GONE);
-                mImageView.setImageResource(R.mipmap.background);
-            }
-        });
-//        if (url.isEmpty()) {
-//            mImageView.setImageResource(R.mipmap.background);
-//        } else {
-//            App.imageLoader.displayImage(url, mImageView, new ImageLoadingListener() {
-//                @Override
-//                public void onLoadingStarted(String s, View view) {
-//                    ProgressBarAnimation anim = new ProgressBarAnimation(mProgressBar, 0, 100);
-//                    anim.setDuration(500);
-//                    mProgressBar.setAnimation(anim);
-//                    mProgressBar.setVisibility(View.VISIBLE);
-//                }
+        App.imageLoader.displayImage(url, mImageView);
+//        App.imageLoader.loadImage(url, new ImageLoadingListener() {
+//            @Override
+//            public void onLoadingStarted(String s, View view) {
+//                ProgressBarAnimation anim = new ProgressBarAnimation(mProgressBar, 0, 100);
+//                anim.setDuration(500);
+//                mProgressBar.setAnimation(anim);
+//                mProgressBar.setVisibility(View.VISIBLE);
+//            }
 //
-//                @Override
-//                public void onLoadingFailed(String s, View view, FailReason failReason) {
-//                    mProgressBar.setVisibility(View.GONE);
-//                    mImageView.setImageResource(R.mipmap.background);
-//                }
+//            @Override
+//            public void onLoadingFailed(String s, View view, FailReason failReason) {
+//                mProgressBar.setVisibility(View.GONE);
+//                mImageView.setImageResource(R.mipmap.background);
+//            }
 //
-//                @Override
-//                public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-//                    mProgressBar.setVisibility(View.GONE);
-//                    mImageView.setImageBitmap(bitmap);
-//                }
+//            @Override
+//            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+//                mProgressBar.setVisibility(View.GONE);
+//                mImageView.setImageBitmap(bitmap);
+//            }
 //
-//                @Override
-//                public void onLoadingCancelled(String s, View view) {
-//                    mProgressBar.setVisibility(View.GONE);
-//                    mImageView.setImageResource(R.mipmap.background);
-//                }
-//            });
-//        }
+//            @Override
+//            public void onLoadingCancelled(String s, View view) {
+//                mProgressBar.setVisibility(View.GONE);
+//                mImageView.setImageResource(R.mipmap.background);
+//            }
+//        });
 
     }
 

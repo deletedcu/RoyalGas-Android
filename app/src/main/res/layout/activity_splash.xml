@@ -3,13 +3,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground">
+    android:background="@android:color/transparent">
 
     <ImageView
-        android:layout_width="200dp"
-        android:layout_height="134dp"
-        android:src="@mipmap/royal_logo"
-        android:scaleType="fitCenter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@mipmap/start"
+        android:scaleType="fitXY"
         android:layout_centerInParent="true"/>
 
     <ProgressBar

@@ -39,9 +39,9 @@ public class ImageFrag extends Fragment {
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
 
     public static class Keys {
-        static final String TITLE = "title";
-        static final String DESCRIPTION = "description";
-        static final String IMAGE_PATH = "image";
+        public static final String TITLE = "title";
+        public static final String DESCRIPTION = "description";
+        public static final String IMAGE_PATH = "image";
     }
 
     public ImageFrag() {

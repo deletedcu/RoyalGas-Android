@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/frag_home"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary">
 
-    <ScrollView
-        android:id="@+id/scrollview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!--<ScrollView-->
+        <!--android:id="@+id/scrollview"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical">-->
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/homefrag_scroll_height">
+                android:layout_height="@dimen/homefrag_scroll_height"
+                android:background="@android:color/transparent">
 
                 <android.support.v4.view.ViewPager
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/viewPager_image" />
+                    android:id="@+id/viewPager_image"
+                    android:background="@color/colorPrimary"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -35,20 +39,25 @@
 
             </RelativeLayout>
 
-
-            <GridView
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/gridview"
-                android:padding="@dimen/padding_5dp"
-                android:horizontalSpacing="@dimen/padding_5dp"
-                android:verticalSpacing="@dimen/padding_5dp"
-                android:numColumns="2"
-                android:stretchMode="spacingWidth"
-                android:background="@color/colorPrimary"/>
+                android:layout_height="match_parent">
+                <GridView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/gridview"
+                    android:padding="@dimen/padding_5dp"
+                    android:horizontalSpacing="@dimen/padding_5dp"
+                    android:verticalSpacing="@dimen/padding_5dp"
+                    android:numColumns="2"
+                    android:stretchMode="spacingWidth"
+                    android:background="@color/colorPrimary"/>
+            </android.support.v4.widget.SwipeRefreshLayout>
 
-        </LinearLayout>
 
-    </ScrollView>
+        <!--</LinearLayout>-->
 
-</RelativeLayout>
+    <!--</ScrollView>-->
+
+</LinearLayout>

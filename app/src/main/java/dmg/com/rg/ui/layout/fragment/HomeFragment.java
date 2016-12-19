@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,8 +62,11 @@ public class HomeFragment extends Fragment {
     private HomeAdapter mHomeAdapter;
     private ProgressDialog mLoadingDialog;
 
-    @BindView(R.id.scrollview)
-    ScrollView mScrollView;
+
+//    @BindView(R.id.scrollview)
+//    ScrollView mScrollView;
+    @BindView(R.id.swipe_container)
+    SwipeRefreshLayout mSwipeLayout;
     @BindView(R.id.viewPager_image)
     ViewPager mViewPager;
     @BindView(R.id.viewPager_countIndicator)
@@ -84,18 +88,6 @@ public class HomeFragment extends Fragment {
             intent.putExtra("link", menu.getStrPath());
             intent.putExtra("title", menu.getStrTitle());
             getContext().startActivity(intent);
-        } else if (menu.getStrType().equals(MyMenu.NATIVE_TYPE)) {
-            if (menu.getStrTitle().equals("Contact Us")) {
-                Snackbar.make(view, "Contact Us", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-//                Intent intent = new Intent(Intent.ACTION_SEND);
-//                String[] recipients = {"m.abdelhadi@gmail.com"};
-//                intent.putExtra(Intent.EXTRA_EMAIL, recipients);
-//                intent.putExtra(Intent.EXTRA_SUBJECT, "From my phone");
-//                intent.putExtra(Intent.EXTRA_TEXT, "Hello, RoyalGas support team.");
-//                intent.putExtra(Intent.EXTRA_CC, "");
-//                intent.setType("text/html");
-//                getContext().startActivity(Intent.createChooser(intent, "Send mail"));
-            }
         }
 
     }
@@ -115,6 +107,19 @@ public class HomeFragment extends Fragment {
         Log.d(TAG, "onCreateView ...");
         View view = inflater.inflate(R.layout.frag_home, container, false);
         ButterKnife.bind(this, view);
+
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                syncGallery();
+                syncHome();
+            }
+        });
+
+        mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         initImagePager();
         initGridView();
@@ -149,36 +154,37 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        if (NetworkUtils.checkNetworkState(getContext())) {
-            syncGallery();
-        } else {
-            loadGallery();
-        }
+        loadGallery();
 
     }
 
     private void initGridView() {
 
         mHomeAdapter = new HomeAdapter(getContext(), mHomeList);
+        int width = DeviceUtils.getScreenResolution(getContext()).x;
+        mGridView.setColumnWidth(width / 2 - ConvertUtils.convertDpToPixels(getContext(), (float)7.5));
         mGridView.setAdapter(mHomeAdapter);
+        loadHome();
 
-        if (NetworkUtils.checkNetworkState(getContext())) {
-            syncHome();
-        } else {
-            loadHome();
-        }
     }
 
     private void addDotsIndicator(int count) {
         int margin = ConvertUtils.convertDpToPixels(getActivity(), 3);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(margin, margin, margin, margin);
+        if (mViewPagerIndicator.getChildCount() > 0) {
+            mViewPagerIndicator.removeAllViews();
+        }
         for (int i = 0; i < count; i ++) {
             ImageView dotView = new ImageView(getActivity());
             dotView.setTag(i);
             dotView.setImageDrawable(mOvalGray);
             dotView.setLayoutParams(layoutParams);
             mViewPagerIndicator.addView(dotView);
+        }
+
+        if (count > 0) {
+            toggleDotsIndicator(0);
         }
     }
 
@@ -258,13 +264,13 @@ public class HomeFragment extends Fragment {
 
                 mGalleryAdapter.setList(mGalleryList);
                 addDotsIndicator(mGalleryList.size());
-//            } else {
-//                syncGallery();
+
             }
 
             cursor.close();
         } else {
-            syncGallery();
+            if (NetworkUtils.checkNetworkState(getContext()))
+                syncGallery();
         }
     }
 
@@ -298,6 +304,7 @@ public class HomeFragment extends Fragment {
                                 }
 
                                 App.editor.putBoolean(Constants.ISCACHE_GALLERY, true);
+                                App.editor.putLong(Constants.UPDATE_GALLERY, updateDate);
                                 App.editor.commit();
 
                             }
@@ -309,13 +316,13 @@ public class HomeFragment extends Fragment {
                         e.printStackTrace();
                         Log.d(TAG, e.getLocalizedMessage());
                     } finally {
-
+                        mSwipeLayout.setRefreshing(false);
                     }
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                    mSwipeLayout.setRefreshing(false);
                 }
             });
         }
@@ -341,15 +348,16 @@ public class HomeFragment extends Fragment {
                 }
 
                 mHomeAdapter.setList(mHomeList);
-                setGridviewLayout(mHomeList.size());
-                mScrollView.smoothScrollTo(0, 0);
+
             } else {
-                syncHome();
+                if (NetworkUtils.checkNetworkState(getContext()))
+                    syncHome();
             }
 
             cursor.close();
         } else {
-            syncHome();
+            if (NetworkUtils.checkNetworkState(getContext()))
+                syncHome();
         }
     }
 

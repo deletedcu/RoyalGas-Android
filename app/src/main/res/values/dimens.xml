@@ -8,7 +8,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <!-- HomeFragment Image Slider height-->
-    <dimen name="homefrag_scroll_height">150dp</dimen>
+    <dimen name="homefrag_scroll_height">160dp</dimen>
 
     <!-- Image size -->
     <dimen name="image_20dp">20dp</dimen>
