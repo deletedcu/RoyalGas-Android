@@ -79,7 +79,8 @@ public class MyWebViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
-        mLink = arguments.getString("link", "");
+//        mLink = arguments.getString("link", "");
+        mLink = "https://buchung.treatwell.at/ort/295259/menue";
     }
 
     @Override

@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@mipmap/start"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         android:layout_centerInParent="true"/>
 
     <ProgressBar

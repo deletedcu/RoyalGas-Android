@@ -5,11 +5,17 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
+import dmg.com.rg.App;
 import dmg.com.rg.R;
 import dmg.com.rg.model.MyMenu;
 import dmg.com.rg.model.PageInfo;
@@ -25,7 +31,7 @@ public class HomeAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
     private List<MyMenu> mList;
-
+    private int itemSize;
     public HomeAdapter(Context mContext) {
         super();
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -35,6 +41,8 @@ public class HomeAdapter extends BaseAdapter {
         super();
         this.mList = list;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        int screenWidth = DeviceUtils.getScreenResolution(mContext).x;
+        itemSize = screenWidth / 2 - ConvertUtils.convertDpToPixels(mContext, (float) 7.5);
     }
 
     public void setList(List<MyMenu> list) {
@@ -61,22 +69,40 @@ public class HomeAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = null;
+        ViewHolder holder;
         if (convertView == null) {
-            view = mInflater.inflate(R.layout.item_pageinfo, null);
+            convertView = mInflater.inflate(R.layout.item_pageinfo, parent, false);
+            holder = new ViewHolder();
+            holder.mImageView = (ImageView) convertView.findViewById(R.id.image_pageinfo);
+            holder.mTextTitle = (TextView) convertView.findViewById(R.id.text_pageinfo_title);
+            holder.mTextDescription = (TextView) convertView.findViewById(R.id.text_pageinfo_description);
+            holder.mProgressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
+
+            convertView.setTag(holder);
         } else {
-            view = convertView;
+            holder = (ViewHolder) convertView.getTag();
         }
 
-        int width = DeviceUtils.getScreenResolution(view.getContext()).x / 2 - ConvertUtils.convertDpToPixels(view.getContext(), (float) 7.5);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
-        view.setLayoutParams(layoutParams);
+        AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(itemSize, itemSize);
+        convertView.setLayoutParams(layoutParams);
 
-        HomeViewHolder viewHolder = new HomeViewHolder(view);
         MyMenu menu = (MyMenu) getItem(position);
 
-        viewHolder.setInfo(menu);
+        holder.mTextTitle.setText(menu.getStrTitle());
+        holder.mTextDescription.setText(menu.getStrDescription());
+        if (menu.getStrImagePath().isEmpty()) {
+            holder.mImageView.setImageResource(R.mipmap.background);
+        } else {
+            App.imageLoader.displayImage(menu.getStrImagePath(), holder.mImageView);
+        }
 
-        return view;
+        return convertView;
+    }
+
+    static class ViewHolder {
+        ImageView mImageView;
+        TextView mTextTitle;
+        TextView mTextDescription;
+        ProgressBar mProgressBar;
     }
 }
